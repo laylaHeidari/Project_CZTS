@@ -122,7 +122,7 @@ model_params = {"timestep": 0, "icond": 10, "model0": 0, "nstates": NSTATES}
 
 #================== Dynamics settings ====================
 dyn_general = {
-    "nsteps": NSTEPS*2, "ntraj": 100, "nstates": NSTATES, "dt": 1.0*units.fs2au, "nfiles": NSTEPS,
+    "nsteps": NSTEPS*2, "ntraj": 500, "nstates": NSTATES, "dt": 1.0*units.fs2au, "nfiles": NSTEPS,
     "decoherence_rates": rates, "ave_gaps": gaps,
     "progress_frequency": 0.1,
     "which_adi_states": range(NSTATES), "which_dia_states": range(NSTATES),
