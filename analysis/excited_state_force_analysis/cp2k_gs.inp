@@ -1,34 +1,16 @@
-! CP2K TDDFPT template for the finite-difference projected-force workflow.
-! generate_bond_displacements.py replaces {PROJECT} and {COORD_FILE}.
-
 &GLOBAL
-  PRINT_LEVEL  MEDIUM
-  PROJECT_NAME {PROJECT}
-  RUN_TYPE  ENERGY
+  PRINT_LEVEL MEDIUM
+  PROJECT_NAME CZTS_GS_DIRECT_FORCE_PBEU6
+  RUN_TYPE ENERGY_FORCE
 &END GLOBAL
 
 &FORCE_EVAL
-  METHOD  QS
-
-  &PROPERTIES
-    &TDDFPT
-      NSTATES     130
-      MAX_ITER    200
-      CONVERGENCE [eV] 1.0e-5
-
-      &MGRID
-        NGRIDS 12
-        CUTOFF 300
-      &END MGRID
-
-      !RESTART     .TRUE.
-      !WFN_RESTART_FILE_NAME RESTART.tdwfn
-
-    &END TDDFPT
-  &END PROPERTIES
+  METHOD QS
 
   &DFT
     UKS .FALSE.
+    CHARGE 0
+    MULTIPLICITY 1
     PLUS_U_METHOD MULLIKEN
 
     BASIS_SET_FILE_NAME BASIS_MOLOPT
@@ -42,7 +24,7 @@
 
     &QS
       METHOD GPW
-      EPS_DEFAULT 1.000E-14
+      EPS_DEFAULT 1.0E-14
     &END QS
 
     &POISSON
@@ -51,19 +33,24 @@
     &END POISSON
 
     &SCF
+      EPS_SCF 1.0E-6
+      MAX_SCF 100
+      SCF_GUESS ATOMIC
+      ADDED_MOS 50
+
       &DIAGONALIZATION ON
       &END DIAGONALIZATION
 
       &MIXING
-        ALPHA 0.3
         METHOD BROYDEN_MIXING
+        ALPHA 0.3
         NBROYDEN 8
       &END MIXING
 
-      EPS_SCF 1.0E-6
-      SCF_GUESS ATOMIC
-      MAX_SCF 50
-      ADDED_MOS 50
+      &PRINT
+        &RESTART ON
+        &END RESTART
+      &END PRINT
     &END SCF
 
     &XC
@@ -94,16 +81,15 @@
   &END DFT
 
   &SUBSYS
-
     &CELL
-      A  10.8683996201         0.0000000000         0.0000000000
-      B  0.0000000000         10.8683996201         0.0000000000
-      C  0.0000000000         0.0000000000        10.8495998383
-      PERIODIC  XYZ
+      A 10.8683996201  0.0000000000  0.0000000000
+      B 0.0000000000  10.8683996201  0.0000000000
+      C 0.0000000000  0.0000000000  10.8495998383
+      PERIODIC XYZ
     &END CELL
 
     &TOPOLOGY
-      COORD_FILE_NAME {COORD_FILE}
+      COORD_FILE_NAME czts_reference_structure.xyz
       COORD_FILE_FORMAT XYZ
     &END TOPOLOGY
 
@@ -125,7 +111,6 @@
     &KIND Cu
       BASIS_SET DZVP-MOLOPT-SR-GTH
       POTENTIAL GTH-PBE-q11
-
       &DFT_PLUS_U ON
         L 2
         U_MINUS_J [eV] 6.0
@@ -133,5 +118,13 @@
     &END KIND
 
   &END SUBSYS
+
+  &PRINT
+    &FORCES ON
+      FILENAME =CZTS_GS_DIRECT_FORCE_PBEU6.forces
+      FORCE_UNIT eV/angstrom
+      NDIGITS 10
+    &END FORCES
+  &END PRINT
 
 &END FORCE_EVAL
